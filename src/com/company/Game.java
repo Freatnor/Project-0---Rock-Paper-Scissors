@@ -23,6 +23,7 @@ public class Game {
     private List<Integer> results, playerMoves, compMoves;
     private int currentGame;
     private String userName;
+    private String secondUserName;
     private Scanner userInput;
 
 
@@ -34,6 +35,16 @@ public class Game {
         compMoves = new ArrayList<>();
         this.userName = userName;
 
+    }
+
+    public Game(Scanner s, String userName, String secondUserName){
+        this.secondUserName = secondUserName;
+        this.userInput = s;
+        currentGame = 0;
+        results = new ArrayList<>();
+        playerMoves = new ArrayList<>();
+        compMoves = new ArrayList<>();
+        this.userName = userName;
     }
 
     /****
@@ -56,14 +67,27 @@ public class Game {
     }
 
     public void play(){
-        comPlay();
+        if(secondUserName == null)
+            comPlay();
         System.out.println("Please enter a move\n" +
                 "(\"Rock\", \"Paper\", or \"Scissors\" are permitted)");
         //parse user input and check for valid input
-        if(!parsePlayerInput(this.userInput.nextLine())){
+        if(!parsePlayerInput(this.userInput.nextLine(), 1)){
             System.out.println("Not a valid input. Please try again.");
             play();
             return;
+        }
+        if(secondUserName != null){
+            for (int i = 0; i < 30; i++) {
+                System.out.println();
+            }
+            System.out.println("Player 2 please enter a move\n" +
+                    "(\"Rock\", \"Paper\", or \"Scissors\" are permitted)");
+            if(!parsePlayerInput(this.userInput.nextLine(), 2)){
+                System.out.println("Not a valid input. Please try again.");
+                play();
+                return;
+            }
         }
         determineWinner();
         printResults();
@@ -75,7 +99,7 @@ public class Game {
         return;
     }
 
-    private boolean parsePlayerInput(String playerInput){
+    private boolean parsePlayerInput(String playerInput, int player){
         playerInput = playerInput.toLowerCase().trim();
         Integer move;
         if(playerInput.equals("rock")){
@@ -91,11 +115,19 @@ public class Game {
             return false;
         }
         //Check if you need to increment the list or set the current value
-        if((playerMoves.size() -1) < currentGame){
-            playerMoves.add(move);
+        if(player == 1) {
+            if ((playerMoves.size() - 1) < currentGame) {
+                playerMoves.add(move);
+            } else {
+                playerMoves.set(currentGame, move);
+            }
         }
         else {
-            playerMoves.set(currentGame, move);
+            if ((compMoves.size() - 1) < currentGame) {
+                compMoves.add(move);
+            } else {
+                compMoves.set(currentGame, move);
+            }
         }
         return true;
     }
@@ -170,13 +202,16 @@ public class Game {
     }
 
     public void printResults(){
-        System.out.println("Player throws " + convertPlay(playerMoves.get(currentGame)) + "!");
-        System.out.println("Computer throws " + convertPlay(compMoves.get(currentGame)) + "!");
+        System.out.println("P1 throws " + convertPlay(playerMoves.get(currentGame)) + "!");
+        if(secondUserName == null)
+            System.out.println("Computer throws " + convertPlay(compMoves.get(currentGame)) + "!");
+        else
+            System.out.println("P2 throws " + convertPlay(compMoves.get(currentGame)) + "!");
         if(results.get(currentGame) == 0){
-            System.out.println("You Lose!");
+            System.out.println("P1 Lose!");
         }
         else if(results.get(currentGame) == 1){
-            System.out.println("You Win!");
+            System.out.println("P1 Win!");
         }
         else if(results.get(currentGame) == 2){
             System.out.println("It's a tie! Try again:\n");

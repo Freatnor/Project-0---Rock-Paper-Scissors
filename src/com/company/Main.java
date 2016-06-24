@@ -20,6 +20,8 @@ public class Main {
         //Load History??
         loadHistory();
 
+        Console console = System.console(); //Would use to actually hide input
+
         System.out.println("Please enter your username");
         userName = playerInput.nextLine().toLowerCase().trim();
 
@@ -29,6 +31,13 @@ public class Main {
             inputLine = inputLine.toLowerCase().trim();
             if(inputLine.equals("play")){
                 Game g = new Game(playerInput, userName);
+                g.play();
+                sessionHistory.add(g);
+            }
+            else if(inputLine.equals("play2p")){
+                System.out.println("Please enter second username");
+                String userName2 = playerInput.nextLine().toLowerCase().trim();
+                Game g = new Game(playerInput, userName, userName2);
                 g.play();
                 sessionHistory.add(g);
             }
@@ -62,7 +71,7 @@ public class Main {
     public static boolean printMenu(){
 
         System.out.println("Welcome to Rock Paper Scissors!\n" + "/*****************************************\\" + "\n" +
-                "Please type \"Play\" to play a game of Rock Paper Scissors.\n" +
+                "Please type \"Play\" to play a game of Rock Paper Scissors. \"Play2p\" to play with 2 players\n" +
                 "Alternatively, type \"History\" to see your match history, \"aHistory\" to print every user's history, or \"Quit\" to exit the app.");
         return true;
     }
